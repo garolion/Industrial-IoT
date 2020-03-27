@@ -6,6 +6,7 @@
 namespace Microsoft.Azure.IIoT.Serializers.MessagePack {
     using Microsoft.Azure.IIoT.Serializers;
     using Microsoft.Azure.IIoT.Exceptions;
+    using global::MessagePack;
     using global::MessagePack.Formatters;
     using global::MessagePack.Resolvers;
     using System;
@@ -36,10 +37,11 @@ namespace Microsoft.Azure.IIoT.Serializers.MessagePack {
         /// <inheritdoc/>
         public Encoding ContentEncoding => null;
 
-        /// <summary>
-        /// Message pack options
-        /// </summary>
+        /// <inheritdoc/>
         public MessagePackSerializerOptions Options { get; }
+
+        /// <inheritdoc/>
+        public IEnumerable<IFormatterResolver> Resolvers { get; }
 
         /// <summary>
         /// Create serializer
@@ -60,15 +62,16 @@ namespace Microsoft.Azure.IIoT.Serializers.MessagePack {
                 }
             }
             resolvers.Add(StandardResolver.Instance);
+            Resolvers = resolvers;
 
 #if MessagePack2
             Options = MessagePackSerializerOptions.Standard
                 .WithSecurity(MessagePackSecurity.UntrustedData)
-                .WithResolver(CompositeResolver.Create(resolvers.ToArray()))
+                .WithResolver(CompositeResolver.Create(Resolvers.ToArray()))
                 ;
 #else
             try {
-                CompositeResolver.RegisterAndSetAsDefault(resolvers.ToArray());
+                CompositeResolver.RegisterAndSetAsDefault(Resolvers.ToArray());
             }
             catch {
                 // already initialized

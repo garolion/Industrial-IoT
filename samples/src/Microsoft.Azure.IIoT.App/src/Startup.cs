@@ -206,7 +206,7 @@ namespace Microsoft.Azure.IIoT.App {
             services.AddRazorPages();
             services.AddSignalR()
                 .AddJsonSerializer()
-             //   .AddMessagePackSerializer()
+                .AddMessagePackSerializer()
              //   .AddAzureSignalRService(Config)
                 ;
             services.AddServerSideBlazor();
@@ -225,6 +225,7 @@ namespace Microsoft.Azure.IIoT.App {
 
             // Register logger
             builder.AddDiagnostics(Config);
+            builder.RegisterModule<MessagePackModule>();
             builder.RegisterModule<NewtonSoftJsonModule>();
 
             // Register http client module (needed for api)...

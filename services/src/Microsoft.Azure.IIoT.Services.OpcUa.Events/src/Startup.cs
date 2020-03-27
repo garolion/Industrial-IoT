@@ -114,12 +114,12 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Events {
             });
 
             // Add controllers as services so they'll be resolved.
-            services.AddControllers().AddJsonSerializer();
+            services.AddControllers().AddJsonSerializer().AddMessagePackSerializer();
 
             // Add signalr and optionally configure signalr service
             services.AddSignalR()
                 .AddJsonSerializer()
-                // .AddMessagePackSerializer()
+                .AddMessagePackSerializer()
                 .AddAzureSignalRService(Config);
 
             services.AddSwagger(Config, ServiceInfo.Name, ServiceInfo.Description);
@@ -182,6 +182,7 @@ namespace Microsoft.Azure.IIoT.Services.OpcUa.Events {
 
             // Register logger
             builder.AddDiagnostics(Config);
+            builder.RegisterModule<MessagePackModule>();
             builder.RegisterModule<NewtonSoftJsonModule>();
 
             // Register metrics logger
